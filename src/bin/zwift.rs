@@ -31,6 +31,7 @@ impl ZellijPlugin for State {
                 }
             }
         }
+        close_self();
         false
     }
 }
