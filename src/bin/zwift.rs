@@ -34,4 +34,13 @@ impl ZellijPlugin for State {
         close_self();
         false
     }
+
+    fn update(&mut self, _event: Event) -> bool {
+        close_self();
+        false
+    }
+
+    fn render(&mut self, _rows: usize, _cols: usize) {
+        close_self();
+    }
 }
