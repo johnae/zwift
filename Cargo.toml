@@ -1,0 +1,12 @@
+[package]
+name = "zwift"
+version = "0.1.0"
+edition = "2021"
+authors = ["John Eriksson"]
+
+[[bin]]
+name = "zwift"
+
+[dependencies]
+regex = "1.10.2"
+zellij-tile = "0.40.0"
