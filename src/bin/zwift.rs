@@ -3,13 +3,19 @@ use std::path::Path;
 use zellij_tile::prelude::*;
 
 #[derive(Default)]
-struct State {}
+struct State {
+    active_session: Option<SessionInfo>,
+}
 
 register_plugin!(State);
 
 impl ZellijPlugin for State {
     fn load(&mut self, _configuration: BTreeMap<String, String>) {
-        request_permission(&[PermissionType::ChangeApplicationState]);
+        request_permission(&[
+            PermissionType::ReadApplicationState,
+            PermissionType::ChangeApplicationState,
+        ]);
+        subscribe(&[EventType::SessionUpdate]);
         set_selectable(false);
         hide_self();
     }
@@ -21,11 +27,15 @@ impl ZellijPlugin for State {
                     let cwd = Path::new(payload.trim());
                     let name = cwd.file_stem().unwrap().to_str().unwrap();
                     eprintln!("Selected project: {name}, cwd {payload}");
-                    switch_session_with_layout(
-                        Some(name),
-                        LayoutInfo::File("dev".into()),
-                        Some(cwd.to_path_buf()),
-                    );
+                    if self.active_session.is_none()
+                        || self.active_session.as_ref().unwrap().name != name
+                    {
+                        switch_session_with_layout(
+                            Some(name),
+                            LayoutInfo::File("dev".into()),
+                            Some(cwd.to_path_buf()),
+                        );
+                    };
                 }
                 _ => {
                     eprintln!("No payload in message");
@@ -36,7 +46,12 @@ impl ZellijPlugin for State {
         false
     }
 
-    fn update(&mut self, _event: Event) -> bool {
+    fn update(&mut self, event: Event) -> bool {
+        if let Event::SessionUpdate(session_infos, _) = event {
+            self.active_session = session_infos
+                .into_iter()
+                .find(|session_info| session_info.is_current_session);
+        }
         hide_self();
         false
     }
