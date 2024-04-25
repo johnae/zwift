@@ -10,6 +10,7 @@ register_plugin!(State);
 impl ZellijPlugin for State {
     fn load(&mut self, _configuration: BTreeMap<String, String>) {
         request_permission(&[PermissionType::ChangeApplicationState]);
+        set_selectable(false);
         hide_self();
     }
 
@@ -31,16 +32,16 @@ impl ZellijPlugin for State {
                 }
             }
         }
-        close_self();
+        hide_self();
         false
     }
 
     fn update(&mut self, _event: Event) -> bool {
-        close_self();
+        hide_self();
         false
     }
 
     fn render(&mut self, _rows: usize, _cols: usize) {
-        close_self();
+        hide_self();
     }
 }
