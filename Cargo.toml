@@ -6,6 +6,7 @@ authors = ["John Eriksson"]
 
 [[bin]]
 name = "zwift"
+path = "src/bin/zwift.rs"
 
 [dependencies]
 regex = "1.10.2"
